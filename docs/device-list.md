@@ -32,3 +32,39 @@
 
 ### Overall Notes
 - **Subnet Mismatch**: Devices 11, 12, 14, and 15 use a `/32` subnet mask, while the others use `/24`.
+
+
+## Raspberry Pi Pico W Devices
+
+| Device No. | Model | IP Type | IP Address | Notes |
+| :--------- | :---------------- | :------ | :--------------- | :---- |
+| **1** | Raspberry Pi Pico W | Static | `192.168.0.201` | |
+| **2** | Raspberry Pi Pico W | Static | `192.168.0.202` | |
+| **3** | Raspberry Pi Pico W | Static | `192.168.0.203` | |
+| **4** | Raspberry Pi Pico W | Static | `192.168.0.204` | |
+| **5** | Raspberry Pi Pico W | Static | `192.168.0.205` | |
+| **6** | Raspberry Pi Pico W | Static | `192.168.0.206` | |
+| **7** | Raspberry Pi Pico W | Static | `192.168.0.207` | |
+| **8** | Raspberry Pi Pico W | Static | `192.168.0.208` | |
+| **9** | Raspberry Pi Pico W | Static | `192.168.0.209` | |
+| **10** | Raspberry Pi Pico W | Static | `192.168.0.210` | |
+| **11** | Raspberry Pi Pico W | Static | `192.168.0.211` | |
+| **12** | Raspberry Pi Pico W | Static | `192.168.0.212` | |
+| **13** | Raspberry Pi Pico W | Static | `192.168.0.213` | |
+| **14** | Raspberry Pi Pico W | Static | `192.168.0.214` | |
+| **15** | Raspberry Pi Pico W | Static | `192.168.0.215` | |
+| **16** | Raspberry Pi Pico W | Static | `192.168.0.216` | |
+| **17** | Raspberry Pi Pico W | Static | `192.168.0.217` | |
+| **18** | Raspberry Pi Pico W | Static | `192.168.0.218` | |
+| **19** | Raspberry Pi Pico W | Static | `192.168.0.219` | |
+| **20** | Raspberry Pi Pico W | Static | `192.168.0.220` | |
+| **21** | Raspberry Pi Pico W | Static | `192.168.0.221` | |
+| **22** | Raspberry Pi Pico W | Static | `192.168.0.222` | |
+| **23** | Raspberry Pi Pico W | Static | `192.168.0.223` | |
+| **24** | Raspberry Pi Pico W | Static | `192.168.0.224` | |
+| **25** | Raspberry Pi Pico W | Static | `192.168.0.225` | |
+| **26** | Raspberry Pi Pico W | Static | `192.168.0.226` | |
+| **27** | Raspberry Pi Pico W | Static | `192.168.0.227` | |
+| **28** | Raspberry Pi Pico W | Static | `192.168.0.228` | |
+
+> **IP Assignment Note:** The Raspberry Pi Pico W devices receive consistent IP addresses through **DHCP reservations configured on the testbed router**. Addresses are assigned sequentially within the range `192.168.0.201`–`192.168.0.228`, with each device receiving a unique address following the convention **`192.168.0.(200 + device number)`**. For example, Device 1 is assigned `192.168.0.201`, Device 2 is assigned `192.168.0.202`, and Device 28 is assigned `192.168.0.228`.
