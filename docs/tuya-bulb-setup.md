@@ -43,8 +43,8 @@ pip install tinytuya
   python -m tinytuya wizard
 ```
 - Enter your credentials when prompted (API Key, API Secret, Device ID, Region).
-- Check tuya-raw.json, press Ctrl+F, and search for local_key. There should be one for each linked device (check the name field as well to easily identify them).
-- Run the following command to get the version number, IP address, and MAC address if you want to make it static later via the router configuration:  
+- Open the generated `tuya-raw.json` file, press `Ctrl + F`, and search for `local_key`. There will be one for each linked device (check the `name` field to easily identify which key belongs to which bulb).
+- Run the following command to get the version number, IP address, and MAC address (recommended if you want to set a static IP via your router later):  
 ```bash
   python -m tinytuya scan
 ```
@@ -56,20 +56,30 @@ pip install tinytuya
 You can now turn off your phone hotspot or remove internet access from the router to verify the local setup is functioning.
 
 ```python
+import time
 import tinytuya
+# --------
+# CONFIG
+# --------
+DEVICE_ID = 'your-device-id-here'
+DEVICE_IP = 'Auto' # Use 'Auto' for quick testing; for actual IP, find from 'tinytuya scan'
+LOCAL_KEY = 'your-local-key-here'
+PROTOCOL_VERSION = 3.5 # Update if your device uses a different protocol version (found through 'tinytuya scan')
 
 bulb = tinytuya.BulbDevice(
-    dev_id='your-device-id-here',
-    address='Auto',  # Quick testing; for actual IP, find from 'tinytuya scan'
-    local_key='your-local-key-here',
-    version=3.5 
+    dev_id=DEVICE_ID,
+    address=DEVICE_IP,
+    local_key=LOCAL_KEY,
+    version=PROTOCOL_VERSION
 )
 
 bulb.turn_off()
+time.sleep(2)
 
 # Turn the bulb ON
 print("Turning bulb on...")
 bulb.turn_on()
+time.sleep(2)
 
 # Set color to Red (RGB values range from 0-255)
 print("Changing color to red...")
