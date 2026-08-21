@@ -13,10 +13,12 @@ pip install tinytuya
 
 ## 1. Setup Bulb and Wi-Fi Connection
 
-- Turn the bulb on and off quickly **4 times** to put it into pairing mode, it will flash red if done correctly.
-- Add the bulb to the Tuya app under the router Wi-Fi. 
 > [!NOTE]
 > For the subsequent steps to work, the router must be momentarily connected to the internet, or you can create a mobile hotspot with the same name and password as the router on a separate device.
+
+- Turn the bulb on and off quickly **4 times** to put it into pairing mode, it will flash red if done correctly.
+- Add the bulb to the Tuya app under the router Wi-Fi. 
+
 
 ---
 
