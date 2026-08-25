@@ -21,8 +21,8 @@ import requests
 #   - two_gas
 #   - RFID
 #
-# Aggregator IP: 192.168.1.100
-# Jetson Nano IP: 192.168.1.200
+# Aggregator IP: 192.168.0.25
+# Jetson Nano IP: 192.168.0.122
 # =====================================================
 
 
@@ -39,7 +39,7 @@ MQTT_BROKER = "localhost"
 MQTT_TOPIC = "smartgrid/SG1/#"
 
 # Jetson Nano Edge Server
-SERVER_URL = "http://192.168.1.200:8000/ingest"
+SERVER_URL = "http://192.168.0.122:8000/ingest"
 
 # Must match API_KEY in UoC_Cluster1_EdgeServer.py (set both to None to disable)
 API_KEY = None

@@ -28,10 +28,10 @@ SSID = "YOUR_SSID"
 PASSWORD = "YOUR_PASSWORD"
 
 # Router / Gateway
-GATEWAY = "192.168.1.1"
+GATEWAY = "192.168.0.1"
 
 # Raspberry Pi Aggregator + MQTT Broker
-MQTT_BROKER = "192.168.1.100"
+MQTT_BROKER = "192.168.0.25"
 
 
 # =====================================================
@@ -48,7 +48,7 @@ CLUSTER_ID = "SG1"
 SENSOR_MODE = "two_temp"
 
 # Static IP for THIS Pico
-STATIC_IP = "192.168.1.10"
+STATIC_IP = "192.168.0.201"
 
 SUBNET_MASK = "255.255.255.0"
 DNS_SERVER = "8.8.8.8"

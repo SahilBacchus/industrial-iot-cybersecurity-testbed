@@ -23,10 +23,10 @@ from simple import MQTTClient
 SSID = "YOUR_SSID"
 PASSWORD = "YOUR_PASSWORD"
 
-GATEWAY = "192.168.1.1"
+GATEWAY = "192.168.0.1"
 
 # Aggregator Raspberry Pi / MQTT Broker
-MQTT_BROKER = "192.168.1.100"
+MQTT_BROKER = "192.168.0.25"
 
 
 # =====================================================
@@ -37,7 +37,7 @@ MQTT_BROKER = "192.168.1.100"
 DEVICE_ID = "pico_11"
 CLUSTER_ID = "SG1"
 
-STATIC_IP = "192.168.1.20"
+STATIC_IP = "192.168.0.211"
 
 SUBNET_MASK = "255.255.255.0"
 DNS_SERVER = "8.8.8.8"
