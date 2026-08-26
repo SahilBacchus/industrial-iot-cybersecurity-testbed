@@ -311,7 +311,7 @@ class MFRC522:
  
     def read(self, addr):
  
-         data = [0x30, addr]
+        data = [0x30, addr]
         data += self._crc(data)
         (stat, recv, _) = self._tocard(0x0C, data)
         return stat, recv
