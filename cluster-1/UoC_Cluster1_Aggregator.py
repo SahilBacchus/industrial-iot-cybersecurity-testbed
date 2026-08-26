@@ -677,7 +677,7 @@ if __name__ == "__main__":
     )
 
     print(
-        "Aggregator IP : 192.168.1.100"
+        "Aggregator IP : 192.168.1.25"
     )
 
     print(
