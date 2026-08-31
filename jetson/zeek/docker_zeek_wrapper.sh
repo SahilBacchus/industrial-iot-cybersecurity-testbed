@@ -9,4 +9,4 @@ docker run -it --rm \
   -v "$HOST_CONFIG":/zeek-config \
   -v "$HOST_LOGS":/zeek-logs \
   zeek/zeek:lts \
-  zeek -i wlan0 /zeek-config/custom_logging.zeek
+  zeek -i eth0 /zeek-config/custom_logging.zeek
