@@ -64,6 +64,104 @@ last_seen = {}
 send_queue = queue.Queue()
 
 
+
+summary_lock = threading.Lock()
+
+# hour_key ("YYYY-MM-DD_HH") -> stats dict
+hour_stats = {}
+
+
+def _empty_hour_stats():
+
+    return {
+        "record_count": 0,
+        "by_device_type": {},
+        "by_device_id": {},
+        "interval_sum": 0.0,
+        "interval_count": 0,
+        "first_record_time": None,
+        "last_record_time": None,
+    }
+
+
+def _update_hour_stats(device, device_type, actual_interval, receive_time):
+
+    hour_key = datetime.now().strftime("%Y-%m-%d_%H")
+
+    with summary_lock:
+
+        stats = hour_stats.setdefault(hour_key, _empty_hour_stats())
+
+        stats["record_count"] += 1
+
+        stats["by_device_type"][device_type] = (
+            stats["by_device_type"].get(device_type, 0) + 1
+        )
+
+        stats["by_device_id"][device] = (
+            stats["by_device_id"].get(device, 0) + 1
+        )
+
+        if isinstance(actual_interval, (int, float)) and actual_interval > 0:
+            stats["interval_sum"] += actual_interval
+            stats["interval_count"] += 1
+
+        if stats["first_record_time"] is None:
+            stats["first_record_time"] = receive_time
+        stats["last_record_time"] = receive_time
+
+
+def _write_hour_summary(hour_key, stats):
+
+    date_part, hour_part = hour_key.split("_")
+
+    folder = os.path.join(DATA_DIR, date_part)
+    os.makedirs(folder, exist_ok=True)
+
+    path = os.path.join(folder, "smartgrid_summary_{}.json".format(hour_part))
+
+    avg_interval = (
+        round(stats["interval_sum"] / stats["interval_count"], 3)
+        if stats["interval_count"] else None
+    )
+
+    summary = {
+        "hour": hour_key,
+        "record_count": stats["record_count"],
+        "by_device_type": stats["by_device_type"],
+        "by_device_id": stats["by_device_id"],
+        "avg_actual_interval": avg_interval,
+        "first_record_time": stats["first_record_time"],
+        "last_record_time": stats["last_record_time"],
+    }
+
+    with open(path, "w") as f:
+        json.dump(summary, f, indent=2)
+
+    print("[SUMMARY] Wrote hourly summary:", path)
+
+
+def hourly_summary_flusher():
+
+    # Checks every minute for any hour bucket that is no
+    # longer the current hour, and flushes it to disk.
+    # Kept separate from the CSV writer, so a slow/failed
+    # summary write can never hold up per-record logging.
+
+    while True:
+
+        time.sleep(60)
+
+        now_hour_key = datetime.now().strftime("%Y-%m-%d_%H")
+
+        with summary_lock:
+            completed = [h for h in hour_stats if h != now_hour_key]
+            to_write = {h: hour_stats.pop(h) for h in completed}
+
+        for hour_key, stats in to_write.items():
+            _write_hour_summary(hour_key, stats)
+
+
 # =====================================================
 # CSV HEADER
 # =====================================================
@@ -319,6 +417,18 @@ def process_and_store(data):
 
 
     last_seen[device] = receive_time
+
+
+    # =================================================
+    # UPDATE HOURLY SUMMARY (in-memory, cheap)
+    # =================================================
+
+    _update_hour_stats(
+        device,
+        device_type,
+        actual_interval,
+        receive_time
+    )
 
 
     # =================================================
@@ -677,7 +787,7 @@ if __name__ == "__main__":
     )
 
     print(
-        "Aggregator IP : 192.168.1.25"
+        "Aggregator IP : 192.168.0.25"
     )
 
     print(
@@ -725,6 +835,16 @@ if __name__ == "__main__":
 
     threading.Thread(
         target=batch_sender,
+        daemon=True
+    ).start()
+
+
+    # =================================================
+    # HOURLY SUMMARY THREAD
+    # =================================================
+
+    threading.Thread(
+        target=hourly_summary_flusher,
         daemon=True
     ).start()
 
