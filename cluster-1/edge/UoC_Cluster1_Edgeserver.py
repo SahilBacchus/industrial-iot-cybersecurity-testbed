@@ -94,6 +94,102 @@ total_received = 0
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
+
+
+summary_lock = threading.Lock()
+
+# hour_key ("YYYY-MM-DD_HH") -> stats dict
+hour_stats: Dict[str, Dict[str, Any]] = {}
+
+
+def _empty_hour_stats():
+
+    return {
+        "record_count": 0,
+        "by_device_type": {},
+        "by_device_id": {},
+        "interval_sum": 0.0,
+        "interval_count": 0,
+        "first_record_time": None,
+        "last_record_time": None,
+    }
+
+
+def _update_hour_stats(device, device_type, actual_interval, receive_ts_edge):
+
+    hour_key = datetime.now().strftime("%Y-%m-%d_%H")
+
+    with summary_lock:
+
+        stats = hour_stats.setdefault(hour_key, _empty_hour_stats())
+
+        stats["record_count"] += 1
+
+        stats["by_device_type"][device_type or "UNKNOWN"] = (
+            stats["by_device_type"].get(device_type or "UNKNOWN", 0) + 1
+        )
+
+        stats["by_device_id"][device or "UNKNOWN"] = (
+            stats["by_device_id"].get(device or "UNKNOWN", 0) + 1
+        )
+
+        if isinstance(actual_interval, (int, float)) and actual_interval > 0:
+            stats["interval_sum"] += actual_interval
+            stats["interval_count"] += 1
+
+        if stats["first_record_time"] is None:
+            stats["first_record_time"] = receive_ts_edge
+        stats["last_record_time"] = receive_ts_edge
+
+
+def _write_hour_summary(hour_key, stats):
+
+    date_part, hour_part = hour_key.split("_")
+
+    folder = os.path.join(DATA_DIR, date_part)
+    os.makedirs(folder, exist_ok=True)
+
+    path = os.path.join(folder, "edge_summary_{}.json".format(hour_part))
+
+    avg_interval = (
+        round(stats["interval_sum"] / stats["interval_count"], 3)
+        if stats["interval_count"] else None
+    )
+
+    summary = {
+        "hour": hour_key,
+        "record_count": stats["record_count"],
+        "by_device_type": stats["by_device_type"],
+        "by_device_id": stats["by_device_id"],
+        "avg_actual_interval": avg_interval,
+        "first_record_time": stats["first_record_time"],
+        "last_record_time": stats["last_record_time"],
+    }
+
+    with open(path, "w") as f:
+        json.dump(summary, f, indent=2)
+
+    print("[SUMMARY] Wrote hourly summary:", path)
+
+
+def hourly_summary_flusher():
+
+    # Checks every minute for any hour bucket that is no
+    # longer the current hour, and flushes it to disk.
+
+    while True:
+
+        time.sleep(60)
+
+        now_hour_key = datetime.now().strftime("%Y-%m-%d_%H")
+
+        with summary_lock:
+            completed = [h for h in hour_stats if h != now_hour_key]
+            to_write = {h: hour_stats.pop(h) for h in completed}
+
+        for hour_key, stats in to_write.items():
+            _write_hour_summary(hour_key, stats)
+
 app = FastAPI(title="Smart Grid Cluster-1 Edge Server")
 
 
@@ -252,6 +348,12 @@ async def ingest(request: Request):
             if not isinstance(data, dict):
                 continue
             sqlite_rows.append(store_record(data, receive_ts_edge))
+            _update_hour_stats(
+                data.get("device_id"),
+                data.get("device_type"),
+                data.get("actual_interval"),
+                receive_ts_edge
+            )
 
         if sqlite_rows:
             insert_rows(sqlite_rows)
@@ -298,5 +400,10 @@ if __name__ == "__main__":
     print("SQLite DB    :", os.path.abspath(DB_PATH))
     print("API key auth :", "ENABLED" if API_KEY else "disabled")
     print("==========================================")
+
+    threading.Thread(
+        target=hourly_summary_flusher,
+        daemon=True
+    ).start()
 
     uvicorn.run(app, host=HOST, port=PORT)
