@@ -182,19 +182,30 @@ def start_zeek():
 
     global zeek_proc
 
-    _require_binary("zeek")
-
     if os.path.exists(ZEEK_LIVE_DIR):
         shutil.rmtree(ZEEK_LIVE_DIR)
     os.makedirs(ZEEK_LIVE_DIR, exist_ok=True)
 
-    cmd = ["zeek", "-i", IFACE]
+    # Locate the repository's jetson/zeek folder relative to this script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_zeek_config = os.path.normpath(
+        os.path.join(script_dir, "../../jetson/zeek")
+    )
 
-    print("[ZEEK] Starting:", " ".join(cmd), "| cwd:", ZEEK_LIVE_DIR)
+    cmd = [
+        "docker", "run", "--rm",
+        "--net=host",
+        "--privileged",
+        "-v", f"{os.path.abspath(ZEEK_LIVE_DIR)}:/zeek-logs",
+        "-v", f"{repo_zeek_config}:/zeek-config",
+        "zeek/zeek:lts",
+        "zeek", "-i", IFACE, "/zeek-config/custom_logging.zeek"
+    ]
+
+    print("[ZEEK] Starting Docker container:", " ".join(cmd), "| log_dir:", os.path.abspath(ZEEK_LIVE_DIR))
 
     zeek_proc = subprocess.Popen(
         cmd,
-        cwd=ZEEK_LIVE_DIR,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
     )
