@@ -202,7 +202,7 @@ def start_zeek():
         "zeek", "-i", IFACE, "/zeek-config/custom_logging.zeek"
     ]
 
-    print("[ZEEK] Starting Docker container:", " ".join(cmd), "| log_dir:", os.path.abspath(ZEEK_LIVE_DIR))
+    print("[ZEEK] Starting Docker container:", " ".join(cmd))
 
     zeek_proc = subprocess.Popen(
         cmd,
