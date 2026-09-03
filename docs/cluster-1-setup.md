@@ -113,7 +113,16 @@ The following resources provide additional information about the Raspberry Pi Pi
 
 ---
 
-# TODO: Add in the required code changes and link our ntp server setup
+# TODO: Add in the required code changes and mosquitto setup
+
+## NTP Configuration
+
+The Aggregator (`192.168.0.25`) should be configured as the local NTP server, acting as the local time reference for the smart grid devices. See [`ntp-server-setup.md`](ntp-server-setup.md) for the complete NTP server installation and configuration.
+
+The Jetson Nano uses Ubuntu's system time synchronization to sync with the local NTP server. Remeber to check [`ntp-server-setup.md`](ntp-server-setup.md) to see how configure that.
+
+The Pico W devices use MicroPython's `ntptime` module to synchronize their clocks and do not require an NTP server installation.
+
 
 ## Startup Procedure
 
