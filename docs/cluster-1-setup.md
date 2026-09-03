@@ -112,3 +112,40 @@ The following resources provide additional information about the Raspberry Pi Pi
 
 
 ---
+
+# TODO: Add in the required code changes and link our ntp server setup
+
+## Startup Procedure
+
+Follow the procedure below to bring Cluster 1 online.
+
+### 1. Start the Aggregator
+
+On the Aggregator Pi, navigate to the `cluster-1/aggregator/` directory and run:
+
+```bash
+python3 UoC_Cluster1_Aggregator.py
+```
+
+The Aggregator will begin receiving data from the Pico W devices.
+
+### 2. Start the Edge Server
+
+On the Jetson Nano Edge Server, navigate to the `cluster-1/edge/` directory and run both programs:
+
+```bash
+python3 UoC_Cluster1_Edgeserver.py
+```
+and in a seperate terminal window run:
+```bash
+sudo python3 UoC_Cluster1_Capture_Manager.py
+```
+
+The Edge Server will begin processing the data received from the Aggregator, while the Capture Manager automatically manages the network traffic capture.
+
+### 3. Power On the Pico W Devices
+
+Connect the Pico W devices to the USB hub and power them on.
+
+The Pico W devices should already have their configured main.py files installed. Once powered on, each Pico W will automatically run `main.py` and begin transmitting data according to its configured transmission profile.
+
