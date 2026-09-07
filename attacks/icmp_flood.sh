@@ -6,8 +6,6 @@
 
 DEFAULT_TARGET_IP="192.168.0.122"
 
-
-
 # Ensure the script is run with root privileges
 if [ "$EUID" -ne 0 ]; then
     echo "Error: This script must be run as root or with sudo."
@@ -23,14 +21,15 @@ run_icmp_test() {
     local target_ip=$1
     local duration_sec=$2
     local mode_flag=$3
+    local rand_source_flag=$4
 
     echo -e "\n---> Launching ICMP traffic test against ${target_ip}..."
     if [ "$duration_sec" -eq 0 ]; then
         echo "Running indefinitely. Press Ctrl+C to stop."
-        hping3 $mode_flag --icmp "${target_ip}"
+        hping3 $mode_flag $rand_source_flag --icmp "${target_ip}"
     else
         echo "Running for ${duration_sec} second(s)..."
-        timeout "${duration_sec}s" hping3 $mode_flag --icmp "${target_ip}"
+        timeout "${duration_sec}s" hping3 $mode_flag $rand_source_flag --icmp "${target_ip}"
     fi
 }
 
@@ -85,18 +84,39 @@ case "$MODE_CHOICE" in
         ;;
 esac
 
+echo -e "\n=========================================================="
+echo "Source IP Configuration:"
+echo "1) Simulate single host DoS (use my real IP address)"
+echo "2) Simulate DDoS, spoof source IP randomly (--rand-source)"
+echo "=========================================================="
+read -p "Enter choice [1-2]: " RAND_SOURCE_CHOICE
+
+case "$RAND_SOURCE_CHOICE" in
+    1)
+        HPING_RAND_SOURCE=""
+        ;;
+    2)
+        HPING_RAND_SOURCE="--rand-source"
+        ;;
+    *)
+        echo "Invalid choice. Exiting."
+        exit 1
+        ;;
+esac
+
 read -p "Enter test duration in seconds (or type 0 for indefinite run): " DURATION
 
 echo -e "\n=========================================================="
 echo "CONFIRMATION:"
-echo " Target IP: ${TARGET_IP}"
-echo " Mode:      ${FLAGS}"
-echo " Duration:  ${DURATION}s"
+echo " Target IP:         ${TARGET_IP}"
+echo " Mode:              ${FLAGS}"
+echo " Source IP Mode:    ${HPING_RAND_SOURCE:-(Real IP)}"
+echo " Duration:          ${DURATION}s"
 echo "=========================================================="
 read -p "Proceed with execution? (y/n): " CONFIRM
 
 if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
-    run_icmp_test "$TARGET_IP" "$DURATION" "$FLAGS"
+    run_icmp_test "$TARGET_IP" "$DURATION" "$FLAGS" "$HPING_RAND_SOURCE"
     echo -e "\nICMP test execution completed."
 else
     echo "Execution aborted."
