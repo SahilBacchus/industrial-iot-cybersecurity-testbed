@@ -25,16 +25,16 @@ run_syn_test() {
     local target_ip=$1
     local target_port=$2
     local duration_sec=$3
-    local mode_flag=$4
+    local traffic_mode_flag=$4
     local rand_source_flag=$5
 
     echo -e "\n---> Launching TCP SYN traffic test against ${target_ip}:${target_port}..."
     if [ "$duration_sec" -eq 0 ]; then
         echo "Running indefinitely. Press Ctrl+C to stop."
-        hping3 $mode_flag $rand_source_flag -S -p "${target_port}" "${target_ip}"
+        hping3 $traffic_mode_flag $rand_source_flag -S -p "${target_port}" "${target_ip}"
     else
         echo "Running for ${duration_sec} second(s)..."
-        timeout "${duration_sec}s" hping3 $mode_flag $rand_source_flag -S -p "${target_port}" "${target_ip}"
+        timeout "${duration_sec}s" hping3 $traffic_mode_flag $rand_source_flag -S -p "${target_port}" "${target_ip}"
     fi
 }
 
@@ -87,14 +87,14 @@ echo "Select Traffic Mode:"
 echo "1) High-Speed Traffic (--flood)"
 echo "2) Fast Interval Traffic (-i u1000)"
 echo "=========================================================="
-read -p "Enter choice [1-2]: " MODE_CHOICE
+read -p "Enter choice [1-2]: " TRAFFIC_MODE_CHOICE
 
-case "$MODE_CHOICE" in
+case "$TRAFFIC_MODE_CHOICE" in
     1)
-        FLAGS="--flood"
+        TRAFFIC_MODE_FLAG="--flood"
         ;;
     2)
-        FLAGS="-i u1000"
+        TRAFFIC_MODE_FLAG="-i u1000"
         ;;
     *)
         echo "Invalid choice. Exiting."
@@ -128,14 +128,14 @@ echo -e "\n=========================================================="
 echo "CONFIRMATION:"
 echo " Target IP:         ${TARGET_IP}"
 echo " Target Port:       ${TARGET_PORT}"
-echo " Mode:              ${FLAGS}"
+echo " Traffic Mode:      ${TRAFFIC_MODE_FLAG}"
 echo " Source IP Mode:    ${HPING_RAND_SOURCE:-(Real IP)}"
 echo " Duration:          ${DURATION}s"
 echo "=========================================================="
 read -p "Proceed with execution? (y/n): " CONFIRM
 
 if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
-    run_syn_test "$TARGET_IP" "$TARGET_PORT" "$DURATION" "$FLAGS" "$HPING_RAND_SOURCE"
+    run_syn_test "$TARGET_IP" "$TARGET_PORT" "$DURATION" "$TRAFFIC_MODE_FLAG" "$HPING_RAND_SOURCE"
     echo -e "\nTCP SYN test execution completed."
 else
     echo "Execution aborted."
