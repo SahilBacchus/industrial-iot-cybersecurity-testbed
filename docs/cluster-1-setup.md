@@ -113,7 +113,7 @@ The following resources provide additional information about the Raspberry Pi Pi
 
 ---
 
-# TODO: Add in the required code changes and mosquitto setup
+# TODO: Add in the required code changes
 
 ## NTP Configuration
 
@@ -122,6 +122,32 @@ The Aggregator (`192.168.0.25`) should be configured as the local NTP server, ac
 The Jetson Nano uses Ubuntu's system time synchronization to sync with the local NTP server. Remeber to check [`ntp-server-setup.md`](ntp-server-setup.md) to see how configure that.
 
 The Pico W devices use MicroPython's `ntptime` module to synchronize their clocks and do not require an NTP server installation.
+
+## Setup MQTT Broker on Aggregator
+
+Install and enable Mosquitto on startup with the following: 
+```bash
+sudo apt update
+sudo apt install -y mosquitto mosquitto-clients
+sudo systemctl enable mosquitto
+sudo systemctl start mosquitto
+```
+
+Create or edit the local broker configuration file to allow network connections from the Pico W nodes:
+```bash
+sudo nano /etc/mosquitto/conf.d/local.conf
+```
+
+Add the following configuration parameters:
+```text
+listener 1883
+allow_anonymous true
+```
+
+Restart the Mosquitto service to apply the new configuration:
+```bash
+sudo systemctl restart mosquitto
+```
 
 
 ## Startup Procedure
