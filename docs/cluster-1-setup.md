@@ -113,7 +113,61 @@ The following resources provide additional information about the Raspberry Pi Pi
 
 ---
 
-# TODO: Add in the required code changes
+
+## Required Code Configurations
+
+### Required Files on Pico Nodes
+
+Before powering on the Pico W nodes, transfer the necessary files to the device root using Thonny. Rename the main execution script to `main.py` so that MicroPython runs it automatically upon boot.
+
+- **Sensor Nodes (Pico 1 – 10):**
+  - `main.py` (renamed from `UoC_Cluster1_Sensors_Sender.py`)
+  - `simple.py` (MicroPython MQTT library)
+
+- **RFID Nodes (Pico 11 & 12):**
+  - `main.py` (renamed from `UoC_Cluster1_RFID_Sender.py`)
+  - `simple.py` (MicroPython MQTT library)
+  - `mfrc522.py` (MFRC522 RFID driver library)
+
+---
+
+### Variable Classifications
+
+**Global Settings (Same across all Pico nodes):**
+- `SSID`: Wi-Fi network SSID
+- `PASSWORD`: Wi-Fi network password
+- `GATEWAY`: Gateway router IP address (`192.168.0.1`)
+- `SUBNET_MASK`: Subnet mask (`255.255.255.0`)
+- `DNS_SERVER`: DNS server IP address (`8.8.8.8`)
+- `MQTT_BROKER`: Aggregator MQTT broker IP address (`192.168.0.25`)
+- `CLUSTER_ID`: Cluster identifier (`"SG1"`)
+
+**Node-Specific Settings (Must be updated per Pico):**
+- `DEVICE_ID`: Unique node identifier string (e.g., `"pico_01"`)
+- `STATIC_IP`: Static IP address assigned to the node
+- `SENSOR_MODE`: Configuration type used on sensor nodes (`"two_temp"` or `"two_gas"`)
+- `DEVICE_TYPE`: Fixed device identification type used on RFID nodes (`"rfid"`)
+- `PROFILE`: Transmission timing profile (`"fast"`, `"medium"`, `"slow"`, or `N/A` for event-driven RFID)
+- `READER_ID`: RFID reader identifier string (e.g., `"rfid_reader_01"`, used on RFID Picos)
+
+---
+
+### Node Configuration Summary Table
+
+| Device | STATIC_IP | DEVICE_ID | SENSOR_MODE / DEVICE_TYPE | PROFILE | READER_ID |
+|---|---|---|---|---|---|
+| **Pico 1** | `192.168.0.201` | `"pico_01"` | `"two_temp"` | `"fast"` | — |
+| **Pico 2** | `192.168.0.202` | `"pico_02"` | `"two_temp"` | `"medium"` | — |
+| **Pico 3** | `192.168.0.203` | `"pico_03"` | `"two_temp"` | `"slow"` | — |
+| **Pico 4** | `192.168.0.204` | `"pico_04"` | `"two_temp"` | `"fast"` | — |
+| **Pico 5** | `192.168.0.205` | `"pico_05"` | `"two_temp"` | `"medium"` | — |
+| **Pico 6** | `192.168.0.206` | `"pico_06"` | `"two_gas"` | `"slow"` | — |
+| **Pico 7** | `192.168.0.207` | `"pico_07"` | `"two_gas"` | `"fast"` | — |
+| **Pico 8** | `192.168.0.208` | `"pico_08"` | `"two_gas"` | `"medium"` | — |
+| **Pico 9** | `192.168.0.209` | `"pico_09"` | `"two_gas"` | `"slow"` | — |
+| **Pico 10** | `192.168.0.210` | `"pico_10"` | `"two_gas"` | `"medium"` | — |
+| **Pico 11** | `192.168.0.211` | `"pico_11"` | `"rfid"` | N/A | `"rfid_reader_01"` |
+| **Pico 12** | `192.168.0.212` | `"pico_12"` | `"rfid"` | N/A | `"rfid_reader_02"` |
 
 ## NTP Configuration
 
