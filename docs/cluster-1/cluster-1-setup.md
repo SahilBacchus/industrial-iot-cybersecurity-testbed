@@ -48,9 +48,9 @@
 | **Port 3** | Edge Server (Nano18) |
 
 > [!NOTE]
-> The Aggregator, Edge Server, and Router should be connected through the network switch. The switch configuration can be found in [`omada-switch-setup.md`](omada-switch-setup.md).
+> The Aggregator, Edge Server, and Router should be connected through the network switch. The switch configuration can be found in [`omada-switch-setup.md`](../omada-switch-setup.md).
 >
-> The complete IP address list for all devices can be found in [`device-list.md`](device-list.md).
+> The complete IP address list for all devices can be found in [`device-list.md`](../device-list.md).
 
 
 
@@ -171,9 +171,9 @@ Before powering on the Pico W nodes, transfer the necessary files to the device 
 
 ## NTP Configuration
 
-The Aggregator (`192.168.0.25`) should be configured as the local NTP server, acting as the local time reference for the smart grid devices. See [`ntp-server-setup.md`](ntp-server-setup.md) for the complete NTP server installation and configuration.
+The Aggregator (`192.168.0.25`) should be configured as the local NTP server, acting as the local time reference for the smart grid devices. See [`ntp-server-setup.md`](../ntp-server-setup.md) for the complete NTP server installation and configuration.
 
-The Jetson Nano uses Ubuntu's system time synchronization to sync with the local NTP server. Remeber to check [`ntp-server-setup.md`](ntp-server-setup.md) to see how configure that.
+The Jetson Nano uses Ubuntu's system time synchronization to sync with the local NTP server. Remeber to check [`ntp-server-setup.md`](../ntp-server-setup.md) to see how configure that.
 
 The Pico W devices use MicroPython's `ntptime` module to synchronize their clocks and do not require an NTP server installation.
 
