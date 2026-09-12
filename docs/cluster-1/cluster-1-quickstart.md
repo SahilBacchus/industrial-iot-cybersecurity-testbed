@@ -59,7 +59,7 @@ Launches remote processes across `pi15` and `nano18` in sequence.
 
 
 > [!NOTE]
-> **Configuring `start_cluster.sh**`
+> **Configuring `start_cluster.sh`**
 > 
 > Before running, verify or adjust the following variables under the **CONFIG** section inside `start_cluster.sh`:
 >
@@ -98,7 +98,7 @@ Retrieves remote testbed log files to your local host via `scp`.
 Logs are saved locally to a timestamped folder inside your `Downloads` directory.
 
 > [!NOTE]
-> **Configuring `download_cluster_data.sh**`
+> **Configuring `download_cluster_data.sh`**
 > 
 > Check or modify the following variables in the **CONFIG** section inside `download_cluster_data.sh`:
 >
