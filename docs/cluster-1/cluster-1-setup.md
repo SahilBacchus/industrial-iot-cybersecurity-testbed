@@ -208,6 +208,7 @@ sudo systemctl restart mosquitto
 
 > [!TIP]
 > **Automated Cluster Launch & Log Retrieval**
+> 
 > For automated execution and remote job control, see the [`cluster-1-quickstart.md`](cluster-1-quickstart.md). You can launch all cluster services across both nodes (`pi15` and `nano18`) using `./start_cluster.sh` and pull log data locally using `./download_cluster_data.sh`.
 
 Follow the manual procedure below if you prefer to bring Cluster 1 online step-by-step:
